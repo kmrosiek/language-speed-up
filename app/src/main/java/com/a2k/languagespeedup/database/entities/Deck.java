@@ -1,4 +1,4 @@
-package com.example.languagespeedup.database.entities;
+package com.a2k.languagespeedup.database.entities;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;

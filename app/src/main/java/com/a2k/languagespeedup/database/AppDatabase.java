@@ -1,4 +1,4 @@
-package com.example.languagespeedup.database;
+package com.a2k.languagespeedup.database;
 
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
@@ -8,14 +8,17 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.example.languagespeedup.database.daos.DeckDao;
-import com.example.languagespeedup.database.entities.Deck;
+import com.a2k.languagespeedup.database.daos.CardDao;
+import com.a2k.languagespeedup.database.daos.DeckDao;
+import com.a2k.languagespeedup.database.entities.Card;
+import com.a2k.languagespeedup.database.entities.Deck;
 
 
-@Database(entities = {Deck.class}, version = 1, exportSchema = false)
+@Database(entities = {Deck.class, Card.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract DeckDao deckDao();
+    public abstract CardDao cardDao();
 
     //--------------------------------------------------------------------------------
     //-----------------------------PRIVATE-MEMBERS------------------------------------
@@ -23,6 +26,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static final Object LOCK = new Object();
     private static AppDatabase instance;
+    private static final String DATABASE_NAME = "dictionary_db";
 
     //--------------------------------------------------------------------------------
     //------------------------------PUBLIC-METHODS------------------------------------
@@ -31,8 +35,9 @@ public abstract class AppDatabase extends RoomDatabase {
     static AppDatabase getInstance(Context context) {
         if(instance == null) {
             synchronized (LOCK) {
+                context.deleteDatabase(DATABASE_NAME);
                 instance = Room.databaseBuilder(context.getApplicationContext(),
-                        AppDatabase.class, "diki_database").fallbackToDestructiveMigration()
+                        AppDatabase.class, DATABASE_NAME).fallbackToDestructiveMigration()
                         .addCallback(roomCallback)
                         .build();
             }

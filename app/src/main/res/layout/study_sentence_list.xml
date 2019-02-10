@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/study_sentence_foreign"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="9pt"
+        android:textColor="#353434"
+        android:layout_marginTop="10dp"
+        tools:text="Foreign"/>
+
+    <TextView
+        android:id="@+id/studY_sentence_native"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="7pt"
+        android:layout_marginBottom="10dp"
+        tools:text="Native"/>
+
+</LinearLayout>

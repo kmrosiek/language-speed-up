@@ -1,4 +1,4 @@
-package com.example.languagespeedup.modelviews;
+package com.a2k.languagespeedup.modelviews;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -6,8 +6,8 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 
-import com.example.languagespeedup.database.AppRepository;
-import com.example.languagespeedup.database.entities.Deck;
+import com.a2k.languagespeedup.database.AppRepository;
+import com.a2k.languagespeedup.database.entities.Deck;
 
 import java.util.List;
 

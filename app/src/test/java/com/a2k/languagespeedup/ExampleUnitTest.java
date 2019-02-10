@@ -1,4 +1,4 @@
-package com.example.languagespeedup;
+package com.a2k.languagespeedup;
 
 import org.junit.Test;
 

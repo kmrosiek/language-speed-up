@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">LanguageSpeedUp</string>
+    <string name="EXTRA_DECK_ID">com.a2k.extra.DECK_ID</string>
 </resources>

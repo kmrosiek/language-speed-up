@@ -1,4 +1,4 @@
-package com.example.languagespeedup.activities;
+package com.a2k.languagespeedup.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -11,18 +11,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.example.languagespeedup.R;
-import com.example.languagespeedup.adapters.MainMenuRecyclerView;
-import com.example.languagespeedup.modelviews.MainMenuMV;
+import com.a2k.languagespeedup.R;
+import com.a2k.languagespeedup.adapters.MainMenuRecyclerView;
+import com.a2k.languagespeedup.modelviews.MainMenuMV;
 
 public class MainActivity extends AppCompatActivity {
-
-    //--------------------------------------------------------------------------------
-    //-----------------------------PRIVATE-MEMBERS------------------------------------
-    //--------------------------------------------------------------------------------
-
-    private static final String TAG = "MainActivityDD";
-
 
     //--------------------------------------------------------------------------------
     //-----------------------------PRIVATE-METHODS------------------------------------
@@ -50,9 +43,13 @@ public class MainActivity extends AppCompatActivity {
         final MainMenuMV decksMainMenuMV = ViewModelProviders.of(this).get(MainMenuMV.class);
         decksMainMenuMV.getAllDecks().observe(this, adapter::setDecks);
 
-        adapter.setOnDeckClickListener(deck -> {
-//                switchToStudyActivity(deck.getId());
-        });
+        adapter.setOnDeckClickListener(deck -> goToStudyActivity(deck.getId()));
+    }
+
+    private void goToStudyActivity(final int deckId) {
+        Intent studyActivity = new Intent(this, Study.class);
+        studyActivity.putExtra(getString(R.string.EXTRA_DECK_ID), deckId);
+        startActivity(studyActivity);
     }
 
     //--------------------------------------------------------------------------------
@@ -63,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -83,6 +79,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 }

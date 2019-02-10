@@ -1,4 +1,4 @@
-package com.example.languagespeedup.activities;
+package com.a2k.languagespeedup.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -9,13 +9,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.languagespeedup.R;
-import com.example.languagespeedup.database.entities.Deck;
-import com.example.languagespeedup.modelviews.AddNewDeckVM;
+import com.a2k.languagespeedup.R;
+import com.a2k.languagespeedup.database.entities.Deck;
+import com.a2k.languagespeedup.modelviews.AddNewDeckVM;
 
 public class AddNewDeck extends AppCompatActivity {
 
-    private static final String TAG = "AddDecktyDD";
+    //--------------------------------------------------------------------------------
+    //-----------------------------PRIVATE-MEMBERS------------------------------------
+    //--------------------------------------------------------------------------------
+
+    private static final String TAG = "AddNewDecktyDD";
+
+    //--------------------------------------------------------------------------------
+    //-----------------------------PRIVATE-METHODS------------------------------------
+    //--------------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
