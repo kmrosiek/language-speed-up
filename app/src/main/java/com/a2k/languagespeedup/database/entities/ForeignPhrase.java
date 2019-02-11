@@ -39,16 +39,8 @@ public class ForeignPhrase {
         return deckId;
     }
 
-    public void setDeckId(int deckId) {
-        this.deckId = deckId;
-    }
-
     public String getForeignText() {
         return foreignText;
-    }
-
-    public void setForeignText(String foreignText) {
-        this.foreignText = foreignText;
     }
 
     public long getId() {

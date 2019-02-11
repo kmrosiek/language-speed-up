@@ -18,7 +18,7 @@ public class StudyVM extends AndroidViewModel {
 
     private AppRepository repository;
     private LiveData<List<ForeignPhrase>> cardsForSelectedDeck;
-    private MutableLiveData<Integer> filterFlashcards = new MutableLiveData<Integer>();
+    private MutableLiveData<Integer> filterFlashcards = new MutableLiveData<>();
 
     public StudyVM(@NonNull Application application) {
         super(application);
