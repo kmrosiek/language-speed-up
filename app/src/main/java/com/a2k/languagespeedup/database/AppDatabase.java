@@ -67,9 +67,9 @@ public abstract class AppDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            deckDao.insert(new Deck("Benjamin Franklin"));
-            deckDao.insert(new Deck("Becoming"));
-            deckDao.insert(new Deck("Amazing story of our country"));
+            deckDao.insert(new Deck("Benjamin Franklin", Deck.ENGLISH));
+            deckDao.insert(new Deck("Becoming", Deck.ENGLISH));
+            deckDao.insert(new Deck("Amazing story of our country", Deck.ENGLISH));
             return null;
         }
     }

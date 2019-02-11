@@ -51,7 +51,7 @@ public class AddNewDeck extends AppCompatActivity {
         }
 
         AddNewDeckVM addNewDeckVM = ViewModelProviders.of(this).get(AddNewDeckVM.class);
-        Deck newDeck = new Deck(deckName);
+        Deck newDeck = new Deck(deckName, Deck.ENGLISH);
         addNewDeckVM.insert(newDeck);
 
         finish();
