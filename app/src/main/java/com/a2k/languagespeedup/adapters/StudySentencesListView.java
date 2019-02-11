@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.a2k.languagespeedup.R;
 import com.a2k.languagespeedup.SentencePair;
+import com.a2k.languagespeedup.database.entities.Sentence;
 
 import java.util.List;
 
@@ -54,5 +55,9 @@ public class StudySentencesListView extends ArrayAdapter<SentencePair> {
 
     public void toggleTranslationIsDisplayed() {
         translationIsDisplayed = !translationIsDisplayed;
+    }
+
+    public void setSentencesPairs(final List<SentencePair> sentencesPairs) {
+        this.sentencesPairs = sentencesPairs;
     }
 }

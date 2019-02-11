@@ -1,6 +1,7 @@
 package com.a2k.languagespeedup.database.entities;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "deck_table")
@@ -10,6 +11,7 @@ public class Deck {
     //------------------------------PUBLIC-MEMBERS------------------------------------
     //--------------------------------------------------------------------------------
 
+    @Ignore
     public static int ENGLISH = 1;
 
     //--------------------------------------------------------------------------------

@@ -69,6 +69,8 @@ public class Study extends AppCompatActivity {
     private void setupViewModel() {
         final StudyVM studyVM = ViewModelProviders.of(this).get(StudyVM.class);
         studyVM.setFilter(deckId);
+        studyVM.getCardsForSelectedDeck().observe(this,cards ->
+                Toast.makeText(Study.this, "Cards were updated.", Toast.LENGTH_SHORT).show());
     }
 
     private void setupSentencesListView() {

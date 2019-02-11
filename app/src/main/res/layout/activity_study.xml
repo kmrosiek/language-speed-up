@@ -61,11 +61,33 @@
         android:id="@+id/study_translate_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginBottom="84dp"
+        android:layout_marginRight="16dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         app:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_g_translate_white_36dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/study_move_to_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        app:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/ic_arrow_forward_white_36dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/study_move_to_previous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="84dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        app:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/ic_arrow_back_white_36dp" />
 
 
 </RelativeLayout>
