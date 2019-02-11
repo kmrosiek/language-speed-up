@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ public class Study extends AppCompatActivity {
     private static final String TAG = "StudyActivityDD";
     private int deckId;
     StudySentencesListView studySentencesListView;
+    ListView meaningsListView;
 
     //--------------------------------------------------------------------------------
     //-----------------------------PRIVATE-METHODS------------------------------------
@@ -83,7 +85,7 @@ public class Study extends AppCompatActivity {
 
         sentencesListView.setAdapter(studySentencesListView);
 
-        ListView meaningsListView = findViewById(R.id.study_meanings_list);
+        meaningsListView = findViewById(R.id.study_meanings_list);
         List<String> meanings = new ArrayList<>();
         meanings.add("przycięcie");
         meanings.add("klamerka");
@@ -99,6 +101,7 @@ public class Study extends AppCompatActivity {
                 meanings);
 
         meaningsListView.setAdapter(arrayAdapter);
+        meaningsListView.setVisibility(View.INVISIBLE);
 
     }
 
@@ -108,7 +111,15 @@ public class Study extends AppCompatActivity {
                 view -> {
                     studySentencesListView.toggleTranslationIsDisplayed();
                     studySentencesListView.notifyDataSetChanged();
+                    toggleMeaningsListViewVisibility();
                 });
+    }
+
+    private void toggleMeaningsListViewVisibility() {
+        if(meaningsListView.getVisibility() == View.INVISIBLE)
+            meaningsListView.setVisibility(View.VISIBLE);
+        else
+            meaningsListView.setVisibility(View.INVISIBLE);
     }
 
     //--------------------------------------------------------------------------------
