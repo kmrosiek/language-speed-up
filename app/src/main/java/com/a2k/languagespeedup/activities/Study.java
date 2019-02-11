@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -67,15 +68,34 @@ public class Study extends AppCompatActivity {
     private void setupSentencesListView() {
         ListView sentencesListView = findViewById(R.id.study_sentences_list);
 
+        //todo the size of the listviews has to be adjusted depending on the number of sentences and meanings
         List<SentencePair> sentences = new ArrayList<>();
         sentences.add(new SentencePair("Find 10 mistakes in the sentences and correct them.", "Znajdź 10 błędów w zdaniach i popraw je."));
-        sentences.add(new SentencePair("He wrote just a few sentences explaining where he was.", "Napisał tylko parę zdań wyjaśniających, gdzie był."));
         sentences.add(new SentencePair("Tomatoes are red.", "Pomidory są czerwone"));
+        sentences.add(new SentencePair("He wrote just a few sentences explaining where he was.", "Napisał tylko parę zdań wyjaśniających, gdzie był."));
 
         StudySentencesListView studySentencesListView = new StudySentencesListView(this, sentences);
 
 
         sentencesListView.setAdapter(studySentencesListView);
+
+        ListView meaningsListView = findViewById(R.id.study_meanings_list);
+        List<String> meanings = new ArrayList<>();
+        meanings.add("przycięcie");
+        meanings.add("klamerka");
+        meanings.add("magazynek");
+        meanings.add("magazynek");
+        meanings.add("magazynek");
+        meanings.add("przycięcie");
+        meanings.add("przycięcie");
+        meanings.add("przycięcie");
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1,
+                meanings);
+
+        meaningsListView.setAdapter(arrayAdapter);
+
     }
 
     //--------------------------------------------------------------------------------
