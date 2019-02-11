@@ -3,6 +3,7 @@ package com.a2k.languagespeedup.activities;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,6 +30,7 @@ public class Study extends AppCompatActivity {
 
     private static final String TAG = "StudyActivityDD";
     private int deckId;
+    StudySentencesListView studySentencesListView;
 
     //--------------------------------------------------------------------------------
     //-----------------------------PRIVATE-METHODS------------------------------------
@@ -46,6 +48,8 @@ public class Study extends AppCompatActivity {
         setupViewModel();
 
         setupSentencesListView();
+
+        setupTranslateFloatingButton();
     }
 
     private void retrieveDeckIdFromMainActivity() {
@@ -74,7 +78,7 @@ public class Study extends AppCompatActivity {
         sentences.add(new SentencePair("Tomatoes are red.", "Pomidory są czerwone"));
         sentences.add(new SentencePair("He wrote just a few sentences explaining where he was.", "Napisał tylko parę zdań wyjaśniających, gdzie był."));
 
-        StudySentencesListView studySentencesListView = new StudySentencesListView(this, sentences);
+        studySentencesListView = new StudySentencesListView(this, sentences);
 
 
         sentencesListView.setAdapter(studySentencesListView);
@@ -96,6 +100,15 @@ public class Study extends AppCompatActivity {
 
         meaningsListView.setAdapter(arrayAdapter);
 
+    }
+
+    private void setupTranslateFloatingButton() {
+        FloatingActionButton translateButton = findViewById(R.id.study_translate_fab);
+        translateButton.setOnClickListener(
+                view -> {
+                    studySentencesListView.toggleTranslationIsDisplayed();
+                    studySentencesListView.notifyDataSetChanged();
+                });
     }
 
     //--------------------------------------------------------------------------------

@@ -22,6 +22,7 @@ public class StudySentencesListView extends ArrayAdapter<SentencePair> {
 
     private Context context;
     private List<SentencePair> sentencesPairs;
+    private boolean translationIsDisplayed = false;
 
     //--------------------------------------------------------------------------------
     //------------------------------PUBLIC-METHODS------------------------------------
@@ -43,7 +44,15 @@ public class StudySentencesListView extends ArrayAdapter<SentencePair> {
 
         TextView nativeSentence = convertView.findViewById(R.id.studY_sentence_native);
         nativeSentence.setText(sentencesPairs.get(position).getNative());
+        if(!translationIsDisplayed)
+            nativeSentence.setVisibility(View.INVISIBLE);
+        else
+            nativeSentence.setVisibility(View.VISIBLE);
 
         return convertView;
+    }
+
+    public void toggleTranslationIsDisplayed() {
+        translationIsDisplayed = !translationIsDisplayed;
     }
 }
