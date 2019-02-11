@@ -6,9 +6,9 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = "card_table", foreignKeys = @ForeignKey(entity = Deck.class,
+@Entity(tableName = "foreign_phrase_table", foreignKeys = @ForeignKey(entity = Deck.class,
         parentColumns = "id", childColumns = "deck_id", onDelete = ForeignKey.CASCADE), indices = @Index("deck_id"))
-public class Card {
+public class ForeignPhrase {
 
     //--------------------------------------------------------------------------------
     //-----------------------------PRIVATE-MEMBERS------------------------------------
@@ -21,6 +21,15 @@ public class Card {
     private int deckId;
 
     private String foreignText;
+
+    //--------------------------------------------------------------------------------
+    //------------------------------PUBLIC-METHODS------------------------------------
+    //--------------------------------------------------------------------------------
+
+    public ForeignPhrase(final int deckId, final String foreignText) {
+        this.deckId = deckId;
+        this.foreignText = foreignText;
+    }
 
     //--------------------------------------------------------------------------------
     //---------------------------GETTERS-AND-SETTERS----------------------------------

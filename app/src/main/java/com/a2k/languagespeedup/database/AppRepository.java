@@ -4,9 +4,9 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
-import com.a2k.languagespeedup.database.daos.CardDao;
+import com.a2k.languagespeedup.database.daos.ForeignPhraseDao;
 import com.a2k.languagespeedup.database.daos.DeckDao;
-import com.a2k.languagespeedup.database.entities.Card;
+import com.a2k.languagespeedup.database.entities.ForeignPhrase;
 import com.a2k.languagespeedup.database.entities.Deck;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class AppRepository {
     //--------------------------------------------------------------------------------
 
     private DeckDao deckDao;
-    private CardDao cardDao;
+    private ForeignPhraseDao foreignPhraseDao;
     private LiveData<List<Deck>> allDecks;
 
     //--------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ public class AppRepository {
     public AppRepository(Application application) {
         AppDatabase database = AppDatabase.getInstance(application);
         deckDao = database.deckDao();
-        cardDao = database.cardDao();
+        foreignPhraseDao = database.foreignTextDao();
         allDecks = deckDao.getAllDecks();
     }
 
@@ -40,12 +40,12 @@ public class AppRepository {
         new InsertNewDeckAsyncTask(deckDao).execute(newDeck);
     }
 
-    public LiveData<List<Card>> getCardsByDeckId(Integer id) {
-        return cardDao.getCardsByDeckId(id);
+    public LiveData<List<ForeignPhrase>> getCardsByDeckId(Integer id) {
+        return foreignPhraseDao.getForeignPhrasesByCardId(id);
     }
 
     public void fetchCardsByDeckId(final int id) {
-        GetCardsByDeckIdAsyncTask task = new GetCardsByDeckIdAsyncTask(cardDao);
+        GetCardsByDeckIdAsyncTask task = new GetCardsByDeckIdAsyncTask(foreignPhraseDao);
         task.execute(id);
     }
 
@@ -68,17 +68,17 @@ public class AppRepository {
         }
     }
 
-    private static class GetCardsByDeckIdAsyncTask extends AsyncTask<Integer, Void, LiveData<List<Card>>> {
+    private static class GetCardsByDeckIdAsyncTask extends AsyncTask<Integer, Void, LiveData<List<ForeignPhrase>>> {
 
-        private CardDao cardDao;
+        private ForeignPhraseDao foreignPhraseDao;
 
-        private GetCardsByDeckIdAsyncTask(CardDao cardDao) {
-            this.cardDao = cardDao;
+        private GetCardsByDeckIdAsyncTask(ForeignPhraseDao foreignPhraseDao) {
+            this.foreignPhraseDao = foreignPhraseDao;
         }
 
         @Override
-        protected LiveData<List<Card>> doInBackground(Integer... deckId) {
-            return cardDao.getCardsByDeckId(deckId[0]);
+        protected LiveData<List<ForeignPhrase>> doInBackground(Integer... deckId) {
+            return foreignPhraseDao.getForeignPhrasesByCardId(deckId[0]);
         }
     }
 

@@ -7,18 +7,17 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 
 import com.a2k.languagespeedup.database.AppRepository;
-import com.a2k.languagespeedup.database.entities.Card;
+import com.a2k.languagespeedup.database.entities.ForeignPhrase;
 
 import java.util.List;
 
 public class StudyVM extends AndroidViewModel {
 
     private AppRepository repository;
-    private LiveData<List<Card>> cardsForSelectedDeck;
+    private LiveData<List<ForeignPhrase>> cardsForSelectedDeck;
     private MutableLiveData<Integer> filterFlashcards = new MutableLiveData<Integer>();
 
     public StudyVM(@NonNull Application application) {
@@ -30,7 +29,7 @@ public class StudyVM extends AndroidViewModel {
 
     public void setFilter(Integer filter) { filterFlashcards.setValue(filter);}
 
-    public LiveData<List<Card>> getCardsForSelectedDeck() {
+    public LiveData<List<ForeignPhrase>> getCardsForSelectedDeck() {
         return cardsForSelectedDeck;
     }
 
