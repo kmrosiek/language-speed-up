@@ -9,17 +9,15 @@ import android.util.LongSparseArray;
 
 import com.a2k.languagespeedup.AsyncResultsForRepository;
 import com.a2k.languagespeedup.Card;
-import com.a2k.languagespeedup.database.daos.ForeignPhraseDao;
 import com.a2k.languagespeedup.database.daos.DeckDao;
+import com.a2k.languagespeedup.database.daos.ForeignPhraseDao;
 import com.a2k.languagespeedup.database.daos.SentenceDao;
-import com.a2k.languagespeedup.database.entities.ForeignPhrase;
 import com.a2k.languagespeedup.database.entities.Deck;
+import com.a2k.languagespeedup.database.entities.ForeignPhrase;
 import com.a2k.languagespeedup.database.entities.Sentence;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AppRepository implements AsyncResultsForRepository {
 
@@ -93,10 +91,9 @@ public class AppRepository implements AsyncResultsForRepository {
         for(Sentence sentence : sentences)
            cardsMap.get(sentence.getForeignPhraseId()).addSentence(sentence);
 
-        for(int i = 0; i < cardsMap.size() ; i++) {
-            Card card = cardsMap.valueAt(i);
-            cards.add(card);
-        }
+
+
+        cards = convertMapToList(cardsMap);
         lifeCards.setValue(cards);
     }
 
@@ -112,6 +109,17 @@ public class AppRepository implements AsyncResultsForRepository {
         GetSentencesByForeignPhraseIdAsyncTask task = new GetSentencesByForeignPhraseIdAsyncTask(sentenceDao);
         task.delegate = this;
         task.execute(foreignPhrasesIds);
+    }
+
+    // utilities---------------------------
+
+    private List<Card> convertMapToList(LongSparseArray<Card> cardsMap) {
+        List<Card> cards = new ArrayList<>();
+        for(int i = 0; i < cardsMap.size() ; i++) {
+            Card card = cardsMap.valueAt(i);
+            cards.add(card);
+        }
+        return cards;
     }
 
     //--------------------------------------------------------------------------------

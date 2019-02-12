@@ -8,20 +8,24 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.a2k.languagespeedup.database.daos.ForeignPhraseDao;
 import com.a2k.languagespeedup.database.daos.DeckDao;
+import com.a2k.languagespeedup.database.daos.ForeignPhraseDao;
+import com.a2k.languagespeedup.database.daos.MeaningDao;
 import com.a2k.languagespeedup.database.daos.SentenceDao;
-import com.a2k.languagespeedup.database.entities.ForeignPhrase;
 import com.a2k.languagespeedup.database.entities.Deck;
+import com.a2k.languagespeedup.database.entities.ForeignPhrase;
+import com.a2k.languagespeedup.database.entities.Meaning;
 import com.a2k.languagespeedup.database.entities.Sentence;
 
 
-@Database(entities = {Deck.class, ForeignPhrase.class, Sentence.class}, version = 1, exportSchema = false)
+@Database(entities = {Deck.class, ForeignPhrase.class, Sentence.class, Meaning.class}, version = 1,
+        exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract DeckDao deckDao();
     public abstract ForeignPhraseDao foreignTextDao();
     public abstract SentenceDao sentenceDao();
+    public abstract MeaningDao meaningDao();
 
     //--------------------------------------------------------------------------------
     //-----------------------------PRIVATE-MEMBERS------------------------------------
@@ -65,33 +69,55 @@ public abstract class AppDatabase extends RoomDatabase {
         private DeckDao deckDao;
         private ForeignPhraseDao foreignPhraseDao;
         private SentenceDao sentenceDao;
+        private  MeaningDao meaningDao;
 
         private PopulateDbAsyncTask(AppDatabase db) {
             deckDao = db.deckDao();
             foreignPhraseDao = db.foreignTextDao();
             sentenceDao = db.sentenceDao();
+            meaningDao = db.meaningDao();
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
+            //-----------------------------------DECKS----------------------------------------------
             deckDao.insert(new Deck("Benjamin Franklin", Deck.ENGLISH));
             deckDao.insert(new Deck("Becoming", Deck.ENGLISH));
             deckDao.insert(new Deck("Amazing story of our country", Deck.ENGLISH));
+
+            //-------------------------------FOREIGN-PHRASES----------------------------------------
             foreignPhraseDao.insert(new ForeignPhrase(1, "Faith"));
             foreignPhraseDao.insert(new ForeignPhrase(1, "Robot"));
             foreignPhraseDao.insert(new ForeignPhrase(1, "Car"));
-            sentenceDao.insert((new Sentence(1 , "I have faith in her to do the right thing.",
+
+            //---------------------------------SENTENCES--------------------------------------------
+            sentenceDao.insert((new Sentence(1 ,
+                    "I have faith in her to do the right thing.",
                     "Ufam, że ona zrobi to co właściwe.")));
-            sentenceDao.insert((new Sentence(1 , "It's a matter of faith.",
+            sentenceDao.insert((new Sentence(1 ,
+                    "It's a matter of faith.",
                     "To jest kwestia wiary")));
-            sentenceDao.insert((new Sentence(1 , "Have faith, my child.",
+            sentenceDao.insert((new Sentence(1 ,
+                    "Have faith, my child.",
                     "Miej ufność, moje dziecko.")));
-            sentenceDao.insert((new Sentence(2 , "The robot used to make me a really great breakfast.",
+            sentenceDao.insert((new Sentence(2 ,
+                    "The robot used to make me a really great breakfast.",
                     "Ten automat robił dla mnie pyszne śniadania.")));
-            sentenceDao.insert((new Sentence(2 , "It is a robot and he will do what I say",
+            sentenceDao.insert((new Sentence(2 ,
+                    "It is a robot and he will do what I say",
                     "To jest robot i zrobi, co mu każę")));
-            sentenceDao.insert((new Sentence(3 , "He got struck by a car and is in hospital now.",
+            sentenceDao.insert((new Sentence(3 ,
+                    "He got struck by a car and is in hospital now.",
                     "On został potrącony przez samochód i jest teraz w szpitalu.")));
+
+            //---------------------------------MEANINGS--------------------------------------------
+            meaningDao.insert(new Meaning(1, "ufność"));
+            meaningDao.insert(new Meaning(1, "zaufanie"));
+            meaningDao.insert(new Meaning(1, "wiara"));
+            meaningDao.insert(new Meaning(2, "automat"));
+            meaningDao.insert(new Meaning(2, "robot"));
+            meaningDao.insert(new Meaning(3, "samochód"));
+
             return null;
         }
     }
