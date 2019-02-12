@@ -40,13 +40,8 @@ public class AppRepository {
         new InsertNewDeckAsyncTask(deckDao).execute(newDeck);
     }
 
-    public LiveData<List<ForeignPhrase>> getCardsByDeckId(Integer id) {
-        return foreignPhraseDao.getForeignPhrasesByCardId(id);
-    }
-
-    public void fetchCardsByDeckId(final int id) {
-        GetCardsByDeckIdAsyncTask task = new GetCardsByDeckIdAsyncTask(foreignPhraseDao);
-        task.execute(id);
+    public LiveData<List<ForeignPhrase>> getForeignPhrasesForDeckId(Integer deckId) {
+        return foreignPhraseDao.getForeignPhrasesByDeckId(deckId);
     }
 
     //--------------------------------------------------------------------------------
@@ -67,20 +62,5 @@ public class AppRepository {
             return null;
         }
     }
-
-    private static class GetCardsByDeckIdAsyncTask extends AsyncTask<Integer, Void, LiveData<List<ForeignPhrase>>> {
-
-        private ForeignPhraseDao foreignPhraseDao;
-
-        private GetCardsByDeckIdAsyncTask(ForeignPhraseDao foreignPhraseDao) {
-            this.foreignPhraseDao = foreignPhraseDao;
-        }
-
-        @Override
-        protected LiveData<List<ForeignPhrase>> doInBackground(Integer... deckId) {
-            return foreignPhraseDao.getForeignPhrasesByCardId(deckId[0]);
-        }
-    }
-
 
 }

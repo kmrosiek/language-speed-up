@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.a2k.languagespeedup.R;
 import com.a2k.languagespeedup.SentencePair;
 import com.a2k.languagespeedup.adapters.StudySentencesListView;
+import com.a2k.languagespeedup.database.entities.ForeignPhrase;
 import com.a2k.languagespeedup.modelviews.StudyVM;
 
 import java.util.ArrayList;
@@ -68,9 +69,14 @@ public class Study extends AppCompatActivity {
 
     private void setupViewModel() {
         final StudyVM studyVM = ViewModelProviders.of(this).get(StudyVM.class);
-        studyVM.setFilter(deckId);
-        studyVM.getCardsForSelectedDeck().observe(this,cards ->
-                Toast.makeText(Study.this, "Cards were updated.", Toast.LENGTH_SHORT).show());
+        studyVM.initWithDeckId(1);
+        studyVM.getForeignPhrasesForSelectedDeck().observe(this, cards -> {
+            StringBuilder stringBuilder = new StringBuilder();
+            for(ForeignPhrase foreignPhrase : cards)
+                stringBuilder.append(foreignPhrase.getId() + "; deckId: " + foreignPhrase.getDeckId() +
+                        "; sd" + foreignPhrase.getForeignText() + "\n");
+                Toast.makeText(Study.this, "Cards were updated : " + stringBuilder.toString(), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "setupViewModel: cards updated: " + stringBuilder.toString());});
     }
 
     private void setupSentencesListView() {
