@@ -38,7 +38,7 @@
 
         <ListView
             android:id="@+id/study_sentences_list"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             tools:listitem="@layout/study_sentence_list" />
@@ -52,7 +52,7 @@
 
         <ListView
             android:id="@+id/study_meanings_list"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp" />
 

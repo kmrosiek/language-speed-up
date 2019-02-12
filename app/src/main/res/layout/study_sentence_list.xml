@@ -9,9 +9,9 @@
         android:id="@+id/study_sentence_foreign"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:textSize="9pt"
         android:textColor="#353434"
-        android:layout_marginTop="10dp"
         tools:text="Foreign"/>
 
     <TextView

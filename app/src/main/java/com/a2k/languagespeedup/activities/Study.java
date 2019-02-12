@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -55,7 +56,11 @@ public class Study extends AppCompatActivity {
 
         initSentencesListViewAdapter();
 
+        initSentencesListViewOnItemClickListener();
+
         initMeaningsListViewAdapter();
+
+        initMeaningsListViewOnItemClickListener();
 
         initViewModel();
 
@@ -98,6 +103,24 @@ public class Study extends AppCompatActivity {
         final ListView sentencesListView = findViewById(R.id.study_sentences_list);
         sentencesListViewAdapter = new StudySentencesListView(this, displayedSentencePairs);
         sentencesListView.setAdapter(sentencesListViewAdapter);
+    }
+
+    private void initSentencesListViewOnItemClickListener() {
+        final ListView sentencesListView = findViewById(R.id.study_sentences_list);
+        sentencesListView.setOnItemClickListener((adapterView, view, i, l) -> {
+            SentencePair textFromClicked = (SentencePair) adapterView.getItemAtPosition(i);
+            Toast.makeText(Study.this, textFromClicked.getForeign(), Toast.LENGTH_SHORT).show();
+        });
+
+    }
+
+    private void initMeaningsListViewOnItemClickListener() {
+        final ListView meaningsListView = findViewById(R.id.study_meanings_list);
+        meaningsListView.setOnItemClickListener((adapterView, view, i, l) -> {
+            String textFromClicked = (String) adapterView.getItemAtPosition(i);
+            Toast.makeText(Study.this, textFromClicked, Toast.LENGTH_SHORT).show();
+        });
+
     }
 
     private void initMeaningsListViewAdapter() {
