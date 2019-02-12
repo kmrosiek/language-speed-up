@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.a2k.languagespeedup.R;
 import com.a2k.languagespeedup.SentencePair;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StudySentencesListView extends ArrayAdapter<SentencePair> {
@@ -33,11 +32,6 @@ public class StudySentencesListView extends ArrayAdapter<SentencePair> {
         super(context, R.layout.study_sentence_list, sentencePairs);
         this.context = context;
         this.sentencePairs = sentencePairs;
-    }
-
-    public StudySentencesListView(@NonNull Context context) {
-        super(context, R.layout.study_sentence_list);
-        this.context = context;
     }
 
     public void setSentencePairs(List<SentencePair> sentencePairs) {

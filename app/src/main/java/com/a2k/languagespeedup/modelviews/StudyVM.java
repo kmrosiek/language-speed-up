@@ -3,27 +3,27 @@ package com.a2k.languagespeedup.modelviews;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.a2k.languagespeedup.Card;
-import com.a2k.languagespeedup.activities.Study;
 import com.a2k.languagespeedup.database.AppRepository;
-import com.a2k.languagespeedup.database.entities.ForeignPhrase;
-import com.a2k.languagespeedup.database.entities.Sentence;
 
 import java.util.List;
 
 public class StudyVM extends AndroidViewModel {
 
-    private static final String TAG = "StudyVMActivityDD";
+    //--------------------------------------------------------------------------------
+    //-----------------------------PRIVATE-MEMBERS------------------------------------
+    //--------------------------------------------------------------------------------
+
     private AppRepository repository;
-    private LiveData<List<ForeignPhrase>> foreignPhrasesForSelectedDeck;
-    private LiveData<List<Sentence>> sentencesForSelectedDeck;
     private LiveData<List<Card>> cards;
+    private int displayedCardPointer = 0;
+
+    //--------------------------------------------------------------------------------
+    //------------------------------PUBLIC-METHODS------------------------------------
+    //--------------------------------------------------------------------------------
 
     public StudyVM(@NonNull Application application) {
         super(application);
@@ -31,16 +31,30 @@ public class StudyVM extends AndroidViewModel {
     }
 
     public void initWithDeckId(final long deckId) {
-        if(foreignPhrasesForSelectedDeck != null)
-            return;
-
         cards = repository.getCards(deckId);
-
-//        foreignPhrasesForSelectedDeck = repository.getForeignPhrasesForDeckId(deckId);
     }
 
     public LiveData<List<Card>> getCardsForSelectedDeck() {
         return cards;
+    }
+
+    //---------------------------------GETTERS----------------------------------------
+    public int getDisplayedCardPointer() {
+        return displayedCardPointer;
+    }
+
+    //--------------------------------MODIFIERS---------------------------------------
+    public void decreaseDisplayedCardPointer() {
+        if(--displayedCardPointer < 0)
+            displayedCardPointer = 0;
+    }
+
+    public void increaseDisplayedCardPointer() {
+        if(cards.getValue() == null)
+            return;
+
+        if(++displayedCardPointer >= cards.getValue().size())
+            displayedCardPointer = cards.getValue().size() - 1;
     }
 
 }

@@ -11,9 +11,11 @@ import com.a2k.languagespeedup.AsyncResultsForRepository;
 import com.a2k.languagespeedup.Card;
 import com.a2k.languagespeedup.database.daos.DeckDao;
 import com.a2k.languagespeedup.database.daos.ForeignPhraseDao;
+import com.a2k.languagespeedup.database.daos.MeaningDao;
 import com.a2k.languagespeedup.database.daos.SentenceDao;
 import com.a2k.languagespeedup.database.entities.Deck;
 import com.a2k.languagespeedup.database.entities.ForeignPhrase;
+import com.a2k.languagespeedup.database.entities.Meaning;
 import com.a2k.languagespeedup.database.entities.Sentence;
 
 import java.util.ArrayList;
@@ -26,11 +28,14 @@ public class AppRepository implements AsyncResultsForRepository {
     //--------------------------------------------------------------------------------
     private static final String TAG = "AppRepositorytyDD";
 
+    //-------------------------------DAOs-CLASSES-------------------------------------
     private DeckDao deckDao;
     private ForeignPhraseDao foreignPhraseDao;
     private SentenceDao sentenceDao;
+    private MeaningDao meaningDao;
+
+    //-----------------------------------DATA----------------------------------------
     private LiveData<List<Deck>> allDecks;
-    private List<Card> cards = new ArrayList<>();
     private MutableLiveData<List<Card>> lifeCards = new MutableLiveData<>();
     private LongSparseArray<Card> cardsMap = new LongSparseArray<>();
 
@@ -43,75 +48,85 @@ public class AppRepository implements AsyncResultsForRepository {
         deckDao = database.deckDao();
         foreignPhraseDao = database.foreignTextDao();
         sentenceDao = database.sentenceDao();
+        meaningDao = database.meaningDao();
         allDecks = deckDao.getAllDecks();
-    }
-
-    public LiveData<List<Deck>> getAllDecks(){
-        return allDecks;
     }
 
     public void insertDeck(Deck newDeck) {
         new InsertNewDeckAsyncTask(deckDao).execute(newDeck);
     }
 
-//    public LiveData<List<ForeignPhrase>> getForeignPhrasesForDeckId(Long deckId) {
-//        LiveData<List<ForeignPhrase>> foreignPhrases = foreignPhraseDao.getForeignPhrasesByDeckId(deckId);
-//        Log.d(TAG, "getForeignPhrasesForDeckId: " + foreignPhrases.toString());
-//
-//        if(sentences != null)
-//        Log.d(TAG, "getForeignPhrasesForDeckId: " + sentences.toString());
-//        else
-//            Log.d(TAG, "getForeignPhrasesForDeckId: NULL!!!");
-//        cards.add(new Card(1));
-//        cards.add(new Card(2));
-//        cards.add(new Card(3));
-//        lifeCards.setValue(cards);
-//        return foreignPhraseDao.getForeignPhrasesByDeckId(deckId);
-//    }
+    //---------------------------------GETTERS----------------------------------------
+
+    public LiveData<List<Deck>> getAllDecks(){
+        return allDecks;
+    }
 
     public LiveData<List<Card>> getCards(final long deckId) {
         Log.d(TAG, "getCards: ");
-        GetForeignPhraseByDeckIdAsyncTask task = new GetForeignPhraseByDeckIdAsyncTask(foreignPhraseDao);
+        GetForeignPhraseByDeckIdAsyncTask task;
+        task = new GetForeignPhraseByDeckIdAsyncTask(foreignPhraseDao);
         task.delegate = this;
         task.execute(deckId);
 
         return lifeCards;
     }
 
-    public void getSentencesByForeignPhraseId(final long foreignPhraseId) {
-        GetSentencesByForeignPhraseIdAsyncTask task = new GetSentencesByForeignPhraseIdAsyncTask(sentenceDao);
-        task.delegate = this;
-        Log.d(TAG, "getSentencesByForeignPhraseId: ");
-//        task.execute(foreignPhraseId);
-    }
-
-    @Override
-    public void SentencesSelectionAsyncFinished(List<Sentence> sentences) {
-        Log.d(TAG, "SentencesSelectionAsyncFinished: no of sentences" + sentences.size());
-        for(Sentence sentence : sentences)
-           cardsMap.get(sentence.getForeignPhraseId()).addSentence(sentence);
-
-
-
-        cards = convertMapToList(cardsMap);
-        lifeCards.setValue(cards);
-    }
+    //-------------------------------ASYNC-RESPONSES----------------------------------
 
     @Override
     public void ForeignPhraseSelectionAsyncFinished(List<ForeignPhrase> foreignPhrases) {
-        Log.d(TAG, "ForeignPhraseSelectionAsyncFinished: list size: " + foreignPhrases.size());
         List<Long> foreignPhrasesIds = new ArrayList<>();
         for(ForeignPhrase foreignPhrase : foreignPhrases) {
             foreignPhrasesIds.add(foreignPhrase.getId());
             cardsMap.append(foreignPhrase.getId(), new Card(foreignPhrase));
         }
 
-        GetSentencesByForeignPhraseIdAsyncTask task = new GetSentencesByForeignPhraseIdAsyncTask(sentenceDao);
-        task.delegate = this;
-        task.execute(foreignPhrasesIds);
+        final int NUMBER_OF_ASYNC_TASKS = 2;
+        selectionAsyncTasksSynchronizer = NUMBER_OF_ASYNC_TASKS;
+
+        GetSentencesByForeignPhraseIdAsyncTask sentencesTask;
+        sentencesTask = new GetSentencesByForeignPhraseIdAsyncTask(sentenceDao);
+        sentencesTask.delegate = this;
+        sentencesTask.execute(foreignPhrasesIds);
+
+        GetMeaningsByForeignPhraseIdAsyncTask meaningsTask;
+        meaningsTask = new GetMeaningsByForeignPhraseIdAsyncTask(meaningDao);
+        meaningsTask.delegate = this;
+        meaningsTask.execute(foreignPhrasesIds);
     }
 
-    // utilities---------------------------
+    @Override
+    public void SentencesSelectionAsyncFinished(List<Sentence> sentences) {
+        for(Sentence sentence : sentences)
+            cardsMap.get(sentence.getForeignPhraseId()).addSentence(sentence);
+
+        updateLifeCardsIfAllAsyncTasksFinished();
+    }
+
+    private int selectionAsyncTasksSynchronizer = 0;
+
+
+    @Override
+    public void MeaningsSelectionAsyncFinished(List<Meaning> meanings) {
+        for(Meaning meaning : meanings)
+            cardsMap.get(meaning.getForeignPhraseId()).addMeaning(meaning.getNativePhrase());
+        updateLifeCardsIfAllAsyncTasksFinished();
+    }
+
+    //--------------------------------------------------------------------------------
+    //------------------------------PRIVATE-METHODS-----------------------------------
+    //--------------------------------------------------------------------------------
+
+    private void updateLifeCardsIfAllAsyncTasksFinished() {
+        final int ALL_ASYNC_TASKS_FINISHED = 0;
+        if(--selectionAsyncTasksSynchronizer == ALL_ASYNC_TASKS_FINISHED) {
+            List<Card> cards = convertMapToList(cardsMap);
+            lifeCards.setValue(cards);
+        }
+    }
+
+    //--------------------------------UTILITIES---------------------------------------
 
     private List<Card> convertMapToList(LongSparseArray<Card> cardsMap) {
         List<Card> cards = new ArrayList<>();
@@ -123,7 +138,7 @@ public class AppRepository implements AsyncResultsForRepository {
     }
 
     //--------------------------------------------------------------------------------
-    //------------------------------PRIVATE-METHODS-----------------------------------
+    //-------------------------------ASYNC-METHODS------------------------------------
     //--------------------------------------------------------------------------------
 
     private static class InsertNewDeckAsyncTask extends AsyncTask<Deck, Void, Void> {
@@ -141,11 +156,8 @@ public class AppRepository implements AsyncResultsForRepository {
         }
     }
 
-    //--------------------------------------------------------------------------------
-    //-------------------------------ASYNC-METHODS------------------------------------
-    //--------------------------------------------------------------------------------
-
-    private static class GetSentencesByForeignPhraseIdAsyncTask extends AsyncTask<List<Long>, Void, List<Sentence>> {
+    private static class GetSentencesByForeignPhraseIdAsyncTask
+            extends AsyncTask<List<Long>, Void, List<Sentence>> {
 
         private SentenceDao sentenceDao;
         private AppRepository delegate = null;
@@ -166,7 +178,8 @@ public class AppRepository implements AsyncResultsForRepository {
         }
     }
 
-    private static class GetForeignPhraseByDeckIdAsyncTask extends AsyncTask<Long, Void, List<ForeignPhrase>> {
+    private static class GetForeignPhraseByDeckIdAsyncTask
+            extends AsyncTask<Long, Void, List<ForeignPhrase>> {
 
         private ForeignPhraseDao foreignPhraseDao;
         private AppRepository delegate = null;
@@ -183,6 +196,28 @@ public class AppRepository implements AsyncResultsForRepository {
         @Override
         protected List<ForeignPhrase> doInBackground(Long... decksIds) {
             return foreignPhraseDao.getForeignPhrasesByDeckId(decksIds[0]);
+        }
+    }
+
+    private static class GetMeaningsByForeignPhraseIdAsyncTask
+            extends AsyncTask<List<Long>, Void, List<Meaning>> {
+
+        private MeaningDao meaningDao;
+        private AppRepository delegate = null;
+
+        @Override
+        protected void onPostExecute(List<Meaning> meanings) {
+            delegate.MeaningsSelectionAsyncFinished(meanings);
+        }
+
+        private GetMeaningsByForeignPhraseIdAsyncTask(MeaningDao meaningDao) {
+            this.meaningDao = meaningDao;
+        }
+
+        @SafeVarargs
+        @Override
+        protected final List<Meaning> doInBackground(List<Long>... foreignPhrasesIds) {
+            return meaningDao.getMeaningsByForeignPhraseId(foreignPhrasesIds[0]);
         }
     }
 }

@@ -32,13 +32,13 @@ public class Study extends AppCompatActivity {
     //--------------------------------------------------------------------------------
 
     private static final String TAG = "StudyActivityDD";
-    private int deckId;
+    private int deckId; //todo move to ViewModel
     private StudySentencesListView sentencesListViewAdapter;
     private ArrayAdapter<String> meaningsListViewAdapter;
     private List<Card> cards = new ArrayList<>();
     private List<SentencePair> displayedSentencePairs = new ArrayList<>();
     private ListView meaningsListView;
-    private int displayedCardPointer = 0;
+    private StudyVM studyVM;
 
     //--------------------------------------------------------------------------------
     //-----------------------------PRIVATE-METHODS------------------------------------
@@ -84,7 +84,7 @@ public class Study extends AppCompatActivity {
     }
 
     private void initViewModel() {
-        final StudyVM studyVM = ViewModelProviders.of(this).get(StudyVM.class);
+        studyVM = ViewModelProviders.of(this).get(StudyVM.class);
         studyVM.initWithDeckId(deckId);
         studyVM.getCardsForSelectedDeck().observe(this, cards -> {
             this.cards = cards;
@@ -123,9 +123,9 @@ public class Study extends AppCompatActivity {
     }
 
     private void renderContent() {
-        renderSentences(cards.get(displayedCardPointer).getSentences());
-        renderMeanings(cards.get(displayedCardPointer).getMeanings());
-        renderForeignPhrase(cards.get(displayedCardPointer).getForeignPhrase());
+        renderSentences(cards.get(studyVM.getDisplayedCardPointer()).getSentences());
+        renderMeanings(cards.get(studyVM.getDisplayedCardPointer()).getMeanings());
+        renderForeignPhrase(cards.get(studyVM.getDisplayedCardPointer()).getForeignPhrase());
     }
 
     private void initTranslateFloatingButton() {
@@ -145,9 +145,7 @@ public class Study extends AppCompatActivity {
                     if(cards.size() == 0)
                         return;
 
-                    if(++displayedCardPointer >= cards.size())
-                        displayedCardPointer = cards.size() - 1;
-
+                    studyVM.increaseDisplayedCardPointer();
                     renderContent();
                 });
     }
@@ -159,9 +157,7 @@ public class Study extends AppCompatActivity {
                     if(cards.size() == 0)
                         return;
 
-                    if(--displayedCardPointer < 0)
-                        displayedCardPointer = 0;
-
+                    studyVM.decreaseDisplayedCardPointer();
                     renderContent();
                 });
     }
@@ -172,7 +168,7 @@ public class Study extends AppCompatActivity {
         foreignPhrase.setOnClickListener(view -> {
             //todo What if there are no cards in cards list.
             Toast.makeText(this, "Sound for word: " +
-                    cards.get(displayedCardPointer).getForeignPhrase(), Toast.LENGTH_SHORT).show();
+                    cards.get(studyVM.getDisplayedCardPointer()).getForeignPhrase(), Toast.LENGTH_SHORT).show();
         });
     }
 

@@ -13,7 +13,7 @@ public class SentencePair {
     //------------------------------PUBLIC-METHODS------------------------------------
     //--------------------------------------------------------------------------------
 
-    public SentencePair(final String foreign, final String nativeS) {
+    SentencePair(final String foreign, final String nativeS) {
         this.foreign = foreign;
         this.nativeS = nativeS;
     }
