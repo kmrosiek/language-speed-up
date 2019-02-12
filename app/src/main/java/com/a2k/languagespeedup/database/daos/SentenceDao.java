@@ -16,5 +16,5 @@ public interface SentenceDao {
     void insert(Sentence sentence);
 
     @Query("SELECT * FROM sentence_table WHERE foreign_phrase_id = :id")
-    LiveData<List<Sentence>> getSentencesByForeignPhraseId(int id);
+    LiveData<List<Sentence>> getSentencesByForeignPhraseId(long id);
 }

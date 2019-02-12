@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.setOnDeckClickListener(deck -> goToStudyActivity(deck.getId()));
     }
 
-    private void goToStudyActivity(final int deckId) {
+    private void goToStudyActivity(final long deckId) {
         Intent studyActivity = new Intent(this, Study.class);
         studyActivity.putExtra(getString(R.string.EXTRA_DECK_ID), deckId);
         startActivity(studyActivity);

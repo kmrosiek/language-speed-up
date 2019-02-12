@@ -21,7 +21,7 @@ public class StudyVM extends AndroidViewModel {
         repository = new AppRepository(application);
     }
 
-    public void initWithDeckId(final int deckId) {
+    public void initWithDeckId(final long deckId) {
         if(foreignPhrasesForSelectedDeck != null)
             return;
 

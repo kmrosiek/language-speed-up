@@ -18,7 +18,7 @@ public class ForeignPhrase {
     private long id;
 
     @ColumnInfo(name = "deck_id")
-    private int deckId;
+    private long deckId;
 
     private String foreignText;
 
@@ -26,7 +26,7 @@ public class ForeignPhrase {
     //------------------------------PUBLIC-METHODS------------------------------------
     //--------------------------------------------------------------------------------
 
-    public ForeignPhrase(final int deckId, final String foreignText) {
+    public ForeignPhrase(final long deckId, final String foreignText) {
         this.deckId = deckId;
         this.foreignText = foreignText;
     }
@@ -35,7 +35,7 @@ public class ForeignPhrase {
     //---------------------------GETTERS-AND-SETTERS----------------------------------
     //--------------------------------------------------------------------------------
 
-    public int getDeckId() {
+    public long getDeckId() {
         return deckId;
     }
 

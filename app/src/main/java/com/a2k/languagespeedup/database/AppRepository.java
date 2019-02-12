@@ -40,7 +40,7 @@ public class AppRepository {
         new InsertNewDeckAsyncTask(deckDao).execute(newDeck);
     }
 
-    public LiveData<List<ForeignPhrase>> getForeignPhrasesForDeckId(Integer deckId) {
+    public LiveData<List<ForeignPhrase>> getForeignPhrasesForDeckId(Long deckId) {
         return foreignPhraseDao.getForeignPhrasesByDeckId(deckId);
     }
 

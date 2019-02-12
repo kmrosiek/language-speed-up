@@ -18,7 +18,7 @@ public class Sentence {
     private long id;
 
     @ColumnInfo(name = "foreign_phrase_id")
-    private int foreignPhraseId;
+    private long foreignPhraseId;
 
     private String foreignSentence;
 
@@ -28,7 +28,7 @@ public class Sentence {
     //------------------------------PUBLIC-METHODS------------------------------------
     //--------------------------------------------------------------------------------
 
-    public Sentence(final int foreignPhraseId, final String foreignSentence,
+    public Sentence(final long foreignPhraseId, final String foreignSentence,
                     final String nativeSentence) {
         this.foreignPhraseId = foreignPhraseId;
         this.foreignSentence = foreignSentence;
@@ -47,7 +47,7 @@ public class Sentence {
         this.id = id;
     }
 
-    public int getForeignPhraseId() {
+    public long getForeignPhraseId() {
         return foreignPhraseId;
     }
 
