@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     //-----------------------------PRIVATE-METHODS------------------------------------
     //--------------------------------------------------------------------------------
 
+    private static final String TAG = "MainActivityDD";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToStudyActivity(final long deckId) {
+        Log.d(TAG, "goToStudyActivity: " + deckId);
         Intent studyActivity = new Intent(this, Study.class);
         studyActivity.putExtra(getString(R.string.EXTRA_DECK_ID), deckId);
         startActivity(studyActivity);

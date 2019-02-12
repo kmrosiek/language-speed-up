@@ -16,5 +16,5 @@ public interface ForeignPhraseDao {
     void insert(ForeignPhrase foreignPhrase);
 
     @Query("SELECT * FROM foreign_phrase_table WHERE deck_id = :id")
-    LiveData<List<ForeignPhrase>> getForeignPhrasesByDeckId(long id);
+    List<ForeignPhrase> getForeignPhrasesByDeckId(long id);
 }

@@ -12,13 +12,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.a2k.languagespeedup.Card;
 import com.a2k.languagespeedup.R;
 import com.a2k.languagespeedup.SentencePair;
 import com.a2k.languagespeedup.adapters.StudySentencesListView;
-import com.a2k.languagespeedup.database.entities.ForeignPhrase;
 import com.a2k.languagespeedup.modelviews.StudyVM;
 
 import java.util.ArrayList;
@@ -32,8 +34,12 @@ public class Study extends AppCompatActivity {
 
     private static final String TAG = "StudyActivityDD";
     private int deckId;
-    StudySentencesListView studySentencesListView;
-    ListView meaningsListView;
+    private StudySentencesListView sentencesListViewAdapter;
+    private ArrayAdapter<String> meaningsListViewAdapter;
+    private List<Card> cards = new ArrayList<>();
+    private List<SentencePair> displayedSentencePairs = new ArrayList<>();
+    private ListView meaningsListView;
+    private int displayedCardPointer = 0;
 
     //--------------------------------------------------------------------------------
     //-----------------------------PRIVATE-METHODS------------------------------------
@@ -48,79 +54,127 @@ public class Study extends AppCompatActivity {
 
         retrieveDeckIdFromMainActivity();
 
-        setupViewModel();
+        initSentencesListViewAdapter();
 
-        setupSentencesListView();
+        initMeaningsListViewAdapter();
 
-        setupTranslateFloatingButton();
+        initViewModel();
+
+        initTranslateFloatingButton();
+
+        initForwardFloatingButton();
+
+        initBackwardFloatingButton();
+
+        initForeignPhraseButton();
     }
 
     private void retrieveDeckIdFromMainActivity() {
         Intent mainActivity = getIntent();
         final int DECK_ID_NOT_PROVIDED = -1;
         deckId = mainActivity.getIntExtra(getString(R.string.EXTRA_DECK_ID), DECK_ID_NOT_PROVIDED);
+        Log.d(TAG, "retrieveDeckIdFromMainActivity: deckid:" + deckId);
         if (deckId == DECK_ID_NOT_PROVIDED) {
-            Toast.makeText(this, "List not provided!", Toast.LENGTH_LONG).show();
-            Log.e(TAG, "Starting study activity, list id was not provided.");
+            Toast.makeText(this, "Deck Id not provided!", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Starting study activity, deck id was not provided.");
         } else {
-            Log.d(TAG, "Starting study activity, list id: " + Integer.toString((deckId)));
+            Log.d(TAG, "Starting study activity, deck id: " + Integer.toString((deckId)));
         }
+        //todo REMOVE
+        deckId = 1;
     }
 
-    private void setupViewModel() {
+    private void initViewModel() {
         final StudyVM studyVM = ViewModelProviders.of(this).get(StudyVM.class);
-        studyVM.initWithDeckId(1);
-        studyVM.getForeignPhrasesForSelectedDeck().observe(this, cards -> {
-            StringBuilder stringBuilder = new StringBuilder();
-            for(ForeignPhrase foreignPhrase : cards)
-                stringBuilder.append(foreignPhrase.getId() + "; deckId: " + foreignPhrase.getDeckId() +
-                        "; sd" + foreignPhrase.getForeignText() + "\n");
-                Toast.makeText(Study.this, "Cards were updated : " + stringBuilder.toString(), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "setupViewModel: cards updated: " + stringBuilder.toString());});
+        studyVM.initWithDeckId(deckId);
+        studyVM.getCardsForSelectedDeck().observe(this, cards -> {
+            this.cards = cards;
+            //todo what happens when list cards is empty?
+            renderContent();
+
+        });
     }
 
-    private void setupSentencesListView() {
-        ListView sentencesListView = findViewById(R.id.study_sentences_list);
+    private void initSentencesListViewAdapter() {
+        final ListView sentencesListView = findViewById(R.id.study_sentences_list);
+        sentencesListViewAdapter = new StudySentencesListView(this, displayedSentencePairs);
+        sentencesListView.setAdapter(sentencesListViewAdapter);
+    }
 
-        //todo the size of the listviews has to be adjusted depending on the number of sentences and meanings
-        List<SentencePair> sentences = new ArrayList<>();
-        sentences.add(new SentencePair("Find 10 mistakes in the sentences and correct them.", "Znajdź 10 błędów w zdaniach i popraw je."));
-        sentences.add(new SentencePair("Tomatoes are red.", "Pomidory są czerwone"));
-        sentences.add(new SentencePair("He wrote just a few sentences explaining where he was.", "Napisał tylko parę zdań wyjaśniających, gdzie był."));
-
-        studySentencesListView = new StudySentencesListView(this, sentences);
-
-
-        sentencesListView.setAdapter(studySentencesListView);
-
+    private void initMeaningsListViewAdapter() {
         meaningsListView = findViewById(R.id.study_meanings_list);
-        List<String> meanings = new ArrayList<>();
-        meanings.add("przycięcie");
-        meanings.add("klamerka");
-        meanings.add("magazynek");
-        meanings.add("magazynek");
-        meanings.add("magazynek");
-        meanings.add("przycięcie");
-        meanings.add("przycięcie");
-        meanings.add("przycięcie");
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1,
-                meanings);
-
-        meaningsListView.setAdapter(arrayAdapter);
+        meaningsListViewAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1);
+        meaningsListView.setAdapter(meaningsListViewAdapter);
         meaningsListView.setVisibility(View.INVISIBLE);
-
     }
 
-    private void setupTranslateFloatingButton() {
+    private void renderForeignPhrase(final String foreignPhrase) {
+            final Button foreignPhraseButton = findViewById(R.id.study_foreign_phrase_button);
+            foreignPhraseButton.setText(foreignPhrase);
+    }
+
+    private void renderSentences(List<SentencePair> sentencePairs) {
+        sentencesListViewAdapter.setSentencePairs(sentencePairs);
+    }
+
+    private void renderMeanings(List<String> meanings) {
+        meaningsListViewAdapter.clear();
+        meaningsListViewAdapter.addAll(meanings);
+    }
+
+    private void renderContent() {
+        renderSentences(cards.get(displayedCardPointer).getSentences());
+        renderMeanings(cards.get(displayedCardPointer).getMeanings());
+        renderForeignPhrase(cards.get(displayedCardPointer).getForeignPhrase());
+    }
+
+    private void initTranslateFloatingButton() {
         FloatingActionButton translateButton = findViewById(R.id.study_translate_fab);
         translateButton.setOnClickListener(
                 view -> {
-                    studySentencesListView.toggleTranslationIsDisplayed();
-                    studySentencesListView.notifyDataSetChanged();
+                    sentencesListViewAdapter.toggleTranslationIsDisplayed();
+                    sentencesListViewAdapter.notifyDataSetChanged();
                     toggleMeaningsListViewVisibility();
                 });
+    }
+
+    private void initForwardFloatingButton() {
+        FloatingActionButton forwardButton = findViewById(R.id.study_forward_button);
+        forwardButton.setOnClickListener(
+                view -> {
+                    if(cards.size() == 0)
+                        return;
+
+                    if(++displayedCardPointer >= cards.size())
+                        displayedCardPointer = cards.size() - 1;
+
+                    renderContent();
+                });
+    }
+
+    private void initBackwardFloatingButton() {
+        FloatingActionButton backwardButton = findViewById(R.id.study_backward_button);
+        backwardButton.setOnClickListener(
+                view -> {
+                    if(cards.size() == 0)
+                        return;
+
+                    if(--displayedCardPointer < 0)
+                        displayedCardPointer = 0;
+
+                    renderContent();
+                });
+    }
+
+    private void initForeignPhraseButton() {
+        final Button foreignPhrase = findViewById(R.id.study_foreign_phrase_button);
+        
+        foreignPhrase.setOnClickListener(view -> {
+            //todo What if there are no cards in cards list.
+            Toast.makeText(this, "Sound for word: " +
+                    cards.get(displayedCardPointer).getForeignPhrase(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void toggleMeaningsListViewVisibility() {
