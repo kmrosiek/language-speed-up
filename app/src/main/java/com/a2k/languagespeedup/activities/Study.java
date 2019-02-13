@@ -17,13 +17,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.a2k.languagespeedup.Card;
 import com.a2k.languagespeedup.R;
 import com.a2k.languagespeedup.SentencePair;
 import com.a2k.languagespeedup.adapters.StudySentencesListView;
 import com.a2k.languagespeedup.modelviews.StudyVM;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Study extends AppCompatActivity {
@@ -35,11 +33,9 @@ public class Study extends AppCompatActivity {
     private static final String TAG = "StudyActivityDD";
     private StudySentencesListView sentencesListViewAdapter;
     private ArrayAdapter<String> meaningsListViewAdapter;
-    private List<Card> cards = new ArrayList<>();
-    private List<SentencePair> displayedSentencePairs = new ArrayList<>();
     private ListView meaningsListView;
-    private StudyVM studyVM;
     private TextView toolbarTitle;
+    private StudyVM studyVM;
 
     //--------------------------------------------------------------------------------
     //-----------------------------PRIVATE-METHODS------------------------------------
@@ -78,12 +74,10 @@ public class Study extends AppCompatActivity {
         final long DECK_ID_NOT_PROVIDED = -1;
         final long deckId = mainActivity.getLongExtra(getString(R.string.EXTRA_DECK_ID), DECK_ID_NOT_PROVIDED);
         Log.d(TAG, "retrieveDeckIdFromMainActivity: deckid:" + deckId);
-        if (deckId == DECK_ID_NOT_PROVIDED) {
+        if (deckId == DECK_ID_NOT_PROVIDED)
             Toast.makeText(this, "Deck Id not provided!", Toast.LENGTH_LONG).show();
-            Log.e(TAG, "Starting study activity, deck id was not provided.");
-        } else {
-            Log.d(TAG, "Starting study activity, deck id: " + Long.toString((deckId)));
-        }
+
+        Log.d(TAG, "Starting study activity, deck id: " + Long.toString((deckId)));
 
         return deckId;
     }
@@ -91,17 +85,13 @@ public class Study extends AppCompatActivity {
     private void initViewModel(final long deckId) {
         studyVM = ViewModelProviders.of(this).get(StudyVM.class);
         studyVM.initWithDeckId(deckId);
-        studyVM.getCardsForSelectedDeck().observe(this, cards -> {
-            this.cards = cards;
-            //todo what happens when list cards is empty?
-            renderContent();
-
-        });
+        studyVM.getCardsForSelectedDeck().observe(this, cards -> renderContent());
     }
 
     private void initSentencesListViewAdapter() {
         final ListView sentencesListView = findViewById(R.id.study_sentences_list);
-        sentencesListViewAdapter = new StudySentencesListView(this, displayedSentencePairs);
+        sentencesListViewAdapter = new StudySentencesListView(this,
+                studyVM.getDisplayedSentencePairs());
         sentencesListView.setAdapter(sentencesListViewAdapter);
     }
 
@@ -146,13 +136,13 @@ public class Study extends AppCompatActivity {
     }
 
     private void renderContent() {
-        if(cards.size() == 0) {
+        if(studyVM.isCardsCollectionEmpty()) {
             renderNoCardsInfo();
             hideFloatingButtons();
         } else {
-            renderSentences(cards.get(studyVM.getDisplayedCardPointer()).getSentences());
-            renderMeanings(cards.get(studyVM.getDisplayedCardPointer()).getMeanings());
-            renderForeignPhrase(cards.get(studyVM.getDisplayedCardPointer()).getForeignPhrase());
+            renderSentences(studyVM.getDisplayedCard().getSentences());
+            renderMeanings(studyVM.getDisplayedCard().getMeanings());
+            renderForeignPhrase(studyVM.getDisplayedCard().getForeignPhrase());
             renderActivityTitle();
         }
     }
@@ -164,7 +154,7 @@ public class Study extends AppCompatActivity {
 
     private void renderActivityTitle() {
         final String activityTitle = Integer.toString(studyVM.getDisplayedCardPointer() + 1)
-                    + '/' + Integer.toString(cards.size());
+                    + '/' + Integer.toString(studyVM.getCardsSize());
         toolbarTitle.setText(activityTitle);
     }
 
@@ -191,7 +181,7 @@ public class Study extends AppCompatActivity {
         FloatingActionButton forwardButton = findViewById(R.id.study_forward_button);
         forwardButton.setOnClickListener(
                 view -> {
-                    if(cards.size() == 0)
+                    if(studyVM.isCardsCollectionEmpty())
                         return;
 
                     studyVM.increaseDisplayedCardPointer();
@@ -203,7 +193,7 @@ public class Study extends AppCompatActivity {
         FloatingActionButton backwardButton = findViewById(R.id.study_backward_button);
         backwardButton.setOnClickListener(
                 view -> {
-                    if(cards.size() == 0)
+                    if(studyVM.isCardsCollectionEmpty())
                         return;
 
                     studyVM.decreaseDisplayedCardPointer();
@@ -215,9 +205,9 @@ public class Study extends AppCompatActivity {
         final Button foreignPhrase = findViewById(R.id.study_foreign_phrase_button);
         
         foreignPhrase.setOnClickListener(view -> {
-            //todo What if there are no cards in cards list.
+            if(!studyVM.isCardsCollectionEmpty())
             Toast.makeText(this, "Sound for word: " +
-                    cards.get(studyVM.getDisplayedCardPointer()).getForeignPhrase(), Toast.LENGTH_SHORT).show();
+                    studyVM.getDisplayedCard().getForeignPhrase(), Toast.LENGTH_SHORT).show();
         });
     }
 

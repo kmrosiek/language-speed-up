@@ -7,8 +7,11 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.a2k.languagespeedup.Card;
+import com.a2k.languagespeedup.SentencePair;
 import com.a2k.languagespeedup.database.AppRepository;
+import com.a2k.languagespeedup.database.entities.ForeignPhrase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StudyVM extends AndroidViewModel {
@@ -20,6 +23,7 @@ public class StudyVM extends AndroidViewModel {
     private AppRepository repository;
     private LiveData<List<Card>> cards;
     private int displayedCardPointer = 0;
+    private List<SentencePair> displayedSentencePairs = new ArrayList<>();
 
     //--------------------------------------------------------------------------------
     //------------------------------PUBLIC-METHODS------------------------------------
@@ -43,6 +47,28 @@ public class StudyVM extends AndroidViewModel {
         return displayedCardPointer;
     }
 
+    public Card getDisplayedCard() {
+        if(cards.getValue() == null)
+            return new Card(new ForeignPhrase(1, "NULL"));
+
+        return cards.getValue().get(displayedCardPointer);
+    }
+
+    public boolean isCardsCollectionEmpty() {
+        return cards.getValue() == null || cards.getValue().size() == 0;
+    }
+
+    public int getCardsSize() {
+        if (cards.getValue() == null)
+            return 0;
+
+        return cards.getValue().size();
+    }
+
+    public List<SentencePair> getDisplayedSentencePairs() {
+        return displayedSentencePairs;
+    }
+
     //--------------------------------MODIFIERS---------------------------------------
     public void decreaseDisplayedCardPointer() {
         if(--displayedCardPointer < 0)
@@ -56,5 +82,6 @@ public class StudyVM extends AndroidViewModel {
         if(++displayedCardPointer >= cards.getValue().size())
             displayedCardPointer = cards.getValue().size() - 1;
     }
+
 }
 
