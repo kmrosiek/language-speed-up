@@ -50,23 +50,26 @@ public class Study extends AppCompatActivity {
 
         final long deckId = retrieveDeckIdFromMainActivity();
 
-        initSentencesListViewAdapter();
-
-        initSentencesListViewOnItemClickListener();
-
-        initMeaningsListViewAdapter();
-
-        initMeaningsListViewOnItemClickListener();
-
         initViewModel(deckId);
 
+        initListViews();
+
+        initButtons();
+
+    }
+
+    private void initButtons() {
         initTranslateFloatingButton();
-
         initForwardFloatingButton();
-
         initBackwardFloatingButton();
-
         initForeignPhraseButton();
+    }
+
+    private void initListViews() {
+        initSentencesListViewAdapter();
+        initSentencesListViewOnItemClickListener();
+        initMeaningsListViewAdapter();
+        initMeaningsListViewOnItemClickListener();
     }
 
     private long retrieveDeckIdFromMainActivity() {
