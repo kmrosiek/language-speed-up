@@ -103,7 +103,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     "Ufam, że ona zrobi to co właściwe.")));
             sentenceDao.insert((new Sentence(1 ,
                     "It's a matter of faith.",
-                    "To jest kwestia wiary")));
+                    "To jest kwestia wiary.")));
             sentenceDao.insert((new Sentence(1 ,
                     "Have faith, my child.",
                     "Miej ufność, moje dziecko.")));
@@ -117,8 +117,8 @@ public abstract class AppDatabase extends RoomDatabase {
                     "He got struck by a car and is in hospital now.",
                     "On został potrącony przez samochód i jest teraz w szpitalu.")));
             sentenceDao.insert((new Sentence(4 ,
-                    "He got struck by a car and is in hospital now.",
-                    "On został potrącony przez samochód i jest teraz w szpitalu.")));
+                    "The swimming pool is surrounded by a fence.",
+                    "Basen jest otoczony płotem.")));
             sentenceDao.insert((new Sentence(7 ,
                     "Here we can compare an intermediate with a finished product.",
                     "Tutaj możemy porównać produkt pośredni z produktem końcowym.")));
