@@ -10,6 +10,7 @@ import androidx.test.rule.ActivityTestRule;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
@@ -27,7 +28,7 @@ public class StudyActivityTest {
         onView(withText(deckName)).perform(click());
 
         String meaning = "zaufanie";
-        onView(withText(meaning)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.INVISIBLE)));
+        onView(withText(meaning)).check(doesNotExist());
 
         String nativeSentence = "To jest kwestia wiary.";
         onView(withText(nativeSentence)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.INVISIBLE)));
@@ -61,7 +62,7 @@ public class StudyActivityTest {
         onView(withText(deckName)).perform(click());
 
         final String meaning = "basen";
-        onView(withText(meaning)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.INVISIBLE)));
+        onView(withText(meaning)).check(doesNotExist());
         final String nativeSentence = "Basen jest otoczony płotem.";
         onView(withText(nativeSentence)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.INVISIBLE)));
         final String foreignSentence = "The swimming pool is surrounded by a fence.";
