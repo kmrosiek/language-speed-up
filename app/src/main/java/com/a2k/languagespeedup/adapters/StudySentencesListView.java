@@ -22,7 +22,7 @@ public class StudySentencesListView extends ArrayAdapter<SentencePair> {
 
     private Context context;
     private List<SentencePair> sentencePairs;
-    private boolean translationIsDisplayed = false;
+    private boolean translationsAreDisplayed = false;
 
     //--------------------------------------------------------------------------------
     //------------------------------PUBLIC-METHODS------------------------------------
@@ -34,10 +34,12 @@ public class StudySentencesListView extends ArrayAdapter<SentencePair> {
         this.sentencePairs = sentencePairs;
     }
 
-    public void setSentencePairs(List<SentencePair> sentencePairs) {
+    public void setSentencePairs(List<SentencePair> sentencePairs,
+                                 final boolean shouldTranslationsBeDisplayed) {
         this.sentencePairs.clear();
         this.sentencePairs.addAll(sentencePairs);
         notifyDataSetChanged();
+        translationsAreDisplayed = shouldTranslationsBeDisplayed;
     }
 
     @NonNull
@@ -50,7 +52,7 @@ public class StudySentencesListView extends ArrayAdapter<SentencePair> {
 
         TextView nativeSentence = convertView.findViewById(R.id.studY_sentence_native);
         nativeSentence.setText(sentencePairs.get(position).getNative());
-        if(!translationIsDisplayed)
+        if(!translationsAreDisplayed)
             nativeSentence.setVisibility(View.INVISIBLE);
         else
             nativeSentence.setVisibility(View.VISIBLE);
@@ -58,7 +60,4 @@ public class StudySentencesListView extends ArrayAdapter<SentencePair> {
         return convertView;
     }
 
-    public void toggleTranslationIsDisplayed() {
-        translationIsDisplayed = !translationIsDisplayed;
-    }
 }

@@ -24,6 +24,7 @@ public class StudyVM extends AndroidViewModel {
     private LiveData<List<Card>> cards;
     private int displayedCardPointer = 0;
     private List<SentencePair> displayedSentencePairs = new ArrayList<>();
+    private boolean translationsAreDisplayed = false;
 
     //--------------------------------------------------------------------------------
     //------------------------------PUBLIC-METHODS------------------------------------
@@ -69,6 +70,9 @@ public class StudyVM extends AndroidViewModel {
         return displayedSentencePairs;
     }
 
+    public boolean getTranslationsAreDisplayed() {
+        return translationsAreDisplayed;
+    }
     //--------------------------------MODIFIERS---------------------------------------
     public void decreaseDisplayedCardPointer() {
         if(--displayedCardPointer < 0)
@@ -81,6 +85,10 @@ public class StudyVM extends AndroidViewModel {
 
         if(++displayedCardPointer >= cards.getValue().size())
             displayedCardPointer = cards.getValue().size() - 1;
+    }
+
+    public void toggleShouldTranslationsBeDisplayed() {
+        translationsAreDisplayed = !translationsAreDisplayed;
     }
 
 }

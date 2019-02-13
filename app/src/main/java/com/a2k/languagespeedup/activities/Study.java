@@ -33,7 +33,6 @@ public class Study extends AppCompatActivity {
     private static final String TAG = "StudyActivityDD";
     private StudySentencesListView sentencesListViewAdapter;
     private ArrayAdapter<String> meaningsListViewAdapter;
-    private ListView meaningsListView;
     private TextView toolbarTitle;
     private StudyVM studyVM;
 
@@ -55,7 +54,6 @@ public class Study extends AppCompatActivity {
         initListViews();
 
         initButtons();
-
     }
 
     //--------------------------------------------------------------------------------
@@ -81,6 +79,8 @@ public class Study extends AppCompatActivity {
         studyVM.initWithDeckId(deckId);
         studyVM.getCardsForSelectedDeck().observe(this, cards -> renderContent());
     }
+
+    //--------------------------------LIST-VIEWS--------------------------------------
 
     private void initSentencesListViewAdapter() {
         final ListView sentencesListView = findViewById(R.id.study_sentences_list);
@@ -108,20 +108,20 @@ public class Study extends AppCompatActivity {
     }
 
     private void initMeaningsListViewAdapter() {
-        meaningsListView = findViewById(R.id.study_meanings_list);
+        ListView meaningsListView = findViewById(R.id.study_meanings_list);
         meaningsListViewAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1);
         meaningsListView.setAdapter(meaningsListViewAdapter);
-        meaningsListView.setVisibility(View.INVISIBLE);
     }
+
+    //---------------------------------BUTTONS----------------------------------------
 
     private void initTranslateFloatingButton() {
         FloatingActionButton translateButton = findViewById(R.id.study_translate_fab);
         translateButton.setOnClickListener(
                 view -> {
-                    sentencesListViewAdapter.toggleTranslationIsDisplayed();
-                    sentencesListViewAdapter.notifyDataSetChanged();
-                    toggleMeaningsListViewVisibility();
+                    studyVM.toggleShouldTranslationsBeDisplayed();
+                    renderContent();
                 });
     }
 
@@ -158,7 +158,6 @@ public class Study extends AppCompatActivity {
                         studyVM.getDisplayedCard().getForeignPhrase(), Toast.LENGTH_SHORT).show();
         });
     }
-
     //--------------------------------------------------------------------------------
     //------------------------------RENDER-METHODS------------------------------------
     //--------------------------------------------------------------------------------
@@ -169,12 +168,16 @@ public class Study extends AppCompatActivity {
     }
 
     private void renderSentences(List<SentencePair> sentencePairs) {
-        sentencesListViewAdapter.setSentencePairs(sentencePairs);
+        sentencesListViewAdapter.setSentencePairs(sentencePairs,
+                studyVM.getTranslationsAreDisplayed());
     }
 
     private void renderMeanings(List<String> meanings) {
         meaningsListViewAdapter.clear();
-        meaningsListViewAdapter.addAll(meanings);
+        if(studyVM.getTranslationsAreDisplayed()) {
+            meaningsListViewAdapter.addAll(meanings);
+            meaningsListViewAdapter.notifyDataSetChanged();
+        }
     }
 
     private void renderContent() {
@@ -224,13 +227,6 @@ public class Study extends AppCompatActivity {
         forwardButton.setVisibility(View.GONE);
         FloatingActionButton backwardButton = findViewById(R.id.study_backward_button);
         backwardButton.setVisibility(View.GONE);
-    }
-
-    private void toggleMeaningsListViewVisibility() {
-        if (meaningsListView.getVisibility() == View.INVISIBLE)
-            meaningsListView.setVisibility(View.VISIBLE);
-        else
-            meaningsListView.setVisibility(View.INVISIBLE);
     }
 
     //--------------------------------------------------------------------------------
