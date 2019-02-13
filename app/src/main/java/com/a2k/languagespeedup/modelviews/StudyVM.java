@@ -56,6 +56,5 @@ public class StudyVM extends AndroidViewModel {
         if(++displayedCardPointer >= cards.getValue().size())
             displayedCardPointer = cards.getValue().size() - 1;
     }
-
 }
 

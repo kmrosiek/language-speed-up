@@ -82,13 +82,20 @@ public abstract class AppDatabase extends RoomDatabase {
         protected Void doInBackground(Void... voids) {
             //-----------------------------------DECKS----------------------------------------------
             deckDao.insert(new Deck("Benjamin Franklin", Deck.ENGLISH));
-            deckDao.insert(new Deck("Becoming", Deck.ENGLISH));
-            deckDao.insert(new Deck("Amazing story of our country", Deck.ENGLISH));
+            deckDao.insert(new Deck("Single Foreign Phrase", Deck.ENGLISH));
+            deckDao.insert(new Deck("Single Empty Foreign Phrase", Deck.ENGLISH));
+            deckDao.insert(new Deck("First and Last Empty", Deck.ENGLISH));
+            deckDao.insert(new Deck("Empty Deck", Deck.ENGLISH));
 
             //-------------------------------FOREIGN-PHRASES----------------------------------------
             foreignPhraseDao.insert(new ForeignPhrase(1, "Faith"));
             foreignPhraseDao.insert(new ForeignPhrase(1, "Robot"));
             foreignPhraseDao.insert(new ForeignPhrase(1, "Car"));
+            foreignPhraseDao.insert(new ForeignPhrase(2, "pool"));
+            foreignPhraseDao.insert(new ForeignPhrase(3, "emptiness"));
+            foreignPhraseDao.insert(new ForeignPhrase(4, "first"));
+            foreignPhraseDao.insert(new ForeignPhrase(4, "intermediate"));
+            foreignPhraseDao.insert(new ForeignPhrase(4, "last"));
 
             //---------------------------------SENTENCES--------------------------------------------
             sentenceDao.insert((new Sentence(1 ,
@@ -109,6 +116,12 @@ public abstract class AppDatabase extends RoomDatabase {
             sentenceDao.insert((new Sentence(3 ,
                     "He got struck by a car and is in hospital now.",
                     "On został potrącony przez samochód i jest teraz w szpitalu.")));
+            sentenceDao.insert((new Sentence(4 ,
+                    "He got struck by a car and is in hospital now.",
+                    "On został potrącony przez samochód i jest teraz w szpitalu.")));
+            sentenceDao.insert((new Sentence(7 ,
+                    "Here we can compare an intermediate with a finished product.",
+                    "Tutaj możemy porównać produkt pośredni z produktem końcowym.")));
 
             //---------------------------------MEANINGS--------------------------------------------
             meaningDao.insert(new Meaning(1, "ufność"));
@@ -117,6 +130,9 @@ public abstract class AppDatabase extends RoomDatabase {
             meaningDao.insert(new Meaning(2, "automat"));
             meaningDao.insert(new Meaning(2, "robot"));
             meaningDao.insert(new Meaning(3, "samochód"));
+            meaningDao.insert(new Meaning(4, "basen"));
+            meaningDao.insert(new Meaning(7, "mediator"));
+            meaningDao.insert(new Meaning(7, "produkt pośredni"));
 
             return null;
         }

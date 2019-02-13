@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.a2k.languagespeedup.Card;
@@ -32,7 +33,6 @@ public class Study extends AppCompatActivity {
     //--------------------------------------------------------------------------------
 
     private static final String TAG = "StudyActivityDD";
-    private int deckId; //todo move to ViewModel
     private StudySentencesListView sentencesListViewAdapter;
     private ArrayAdapter<String> meaningsListViewAdapter;
     private List<Card> cards = new ArrayList<>();
@@ -51,7 +51,7 @@ public class Study extends AppCompatActivity {
 
         setUpToolbar();
 
-        retrieveDeckIdFromMainActivity();
+        final long deckId = retrieveDeckIdFromMainActivity();
 
         initSentencesListViewAdapter();
 
@@ -61,7 +61,7 @@ public class Study extends AppCompatActivity {
 
         initMeaningsListViewOnItemClickListener();
 
-        initViewModel();
+        initViewModel(deckId);
 
         initTranslateFloatingButton();
 
@@ -72,22 +72,22 @@ public class Study extends AppCompatActivity {
         initForeignPhraseButton();
     }
 
-    private void retrieveDeckIdFromMainActivity() {
+    private long retrieveDeckIdFromMainActivity() {
         Intent mainActivity = getIntent();
-        final int DECK_ID_NOT_PROVIDED = -1;
-        deckId = mainActivity.getIntExtra(getString(R.string.EXTRA_DECK_ID), DECK_ID_NOT_PROVIDED);
+        final long DECK_ID_NOT_PROVIDED = -1;
+        final long deckId = mainActivity.getLongExtra(getString(R.string.EXTRA_DECK_ID), DECK_ID_NOT_PROVIDED);
         Log.d(TAG, "retrieveDeckIdFromMainActivity: deckid:" + deckId);
         if (deckId == DECK_ID_NOT_PROVIDED) {
             Toast.makeText(this, "Deck Id not provided!", Toast.LENGTH_LONG).show();
             Log.e(TAG, "Starting study activity, deck id was not provided.");
         } else {
-            Log.d(TAG, "Starting study activity, deck id: " + Integer.toString((deckId)));
+            Log.d(TAG, "Starting study activity, deck id: " + Long.toString((deckId)));
         }
-        //todo REMOVE
-        deckId = 1;
+
+        return deckId;
     }
 
-    private void initViewModel() {
+    private void initViewModel(final long deckId) {
         studyVM = ViewModelProviders.of(this).get(StudyVM.class);
         studyVM.initWithDeckId(deckId);
         studyVM.getCardsForSelectedDeck().observe(this, cards -> {
@@ -145,9 +145,28 @@ public class Study extends AppCompatActivity {
     }
 
     private void renderContent() {
-        renderSentences(cards.get(studyVM.getDisplayedCardPointer()).getSentences());
-        renderMeanings(cards.get(studyVM.getDisplayedCardPointer()).getMeanings());
-        renderForeignPhrase(cards.get(studyVM.getDisplayedCardPointer()).getForeignPhrase());
+        if(cards.size() == 0) {
+            renderNoCardsInfo();
+            hideFloatingButtons();
+        } else {
+            renderSentences(cards.get(studyVM.getDisplayedCardPointer()).getSentences());
+            renderMeanings(cards.get(studyVM.getDisplayedCardPointer()).getMeanings());
+            renderForeignPhrase(cards.get(studyVM.getDisplayedCardPointer()).getForeignPhrase());
+        }
+    }
+
+    private void renderNoCardsInfo() {
+        TextView noCardsInfo = findViewById(R.id.study_no_cards_info);
+        noCardsInfo.setVisibility(View.VISIBLE);
+    }
+
+    private void hideFloatingButtons() {
+        FloatingActionButton translateButton = findViewById(R.id.study_translate_fab);
+        translateButton.setVisibility(View.GONE);
+        FloatingActionButton forwardButton = findViewById(R.id.study_forward_button);
+        forwardButton.setVisibility(View.GONE);
+        FloatingActionButton backwardButton = findViewById(R.id.study_backward_button);
+        backwardButton.setVisibility(View.GONE);
     }
 
     private void initTranslateFloatingButton() {

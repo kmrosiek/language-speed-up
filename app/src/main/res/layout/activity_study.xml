@@ -58,6 +58,16 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/study_no_cards_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No cards in this deck."
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:textSize="12pt"/>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/study_translate_fab"
         android:layout_width="wrap_content"
