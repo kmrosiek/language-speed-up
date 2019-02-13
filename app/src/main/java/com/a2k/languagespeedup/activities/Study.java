@@ -58,6 +58,10 @@ public class Study extends AppCompatActivity {
 
     }
 
+    //--------------------------------------------------------------------------------
+    //--------------------------------INIT-METHODS------------------------------------
+    //--------------------------------------------------------------------------------
+
     private void initButtons() {
         initTranslateFloatingButton();
         initForwardFloatingButton();
@@ -70,19 +74,6 @@ public class Study extends AppCompatActivity {
         initSentencesListViewOnItemClickListener();
         initMeaningsListViewAdapter();
         initMeaningsListViewOnItemClickListener();
-    }
-
-    private long retrieveDeckIdFromMainActivity() {
-        Intent mainActivity = getIntent();
-        final long DECK_ID_NOT_PROVIDED = -1;
-        final long deckId = mainActivity.getLongExtra(getString(R.string.EXTRA_DECK_ID), DECK_ID_NOT_PROVIDED);
-        Log.d(TAG, "retrieveDeckIdFromMainActivity: deckid:" + deckId);
-        if (deckId == DECK_ID_NOT_PROVIDED)
-            Toast.makeText(this, "Deck Id not provided!", Toast.LENGTH_LONG).show();
-
-        Log.d(TAG, "Starting study activity, deck id: " + Long.toString((deckId)));
-
-        return deckId;
     }
 
     private void initViewModel(final long deckId) {
@@ -124,9 +115,57 @@ public class Study extends AppCompatActivity {
         meaningsListView.setVisibility(View.INVISIBLE);
     }
 
+    private void initTranslateFloatingButton() {
+        FloatingActionButton translateButton = findViewById(R.id.study_translate_fab);
+        translateButton.setOnClickListener(
+                view -> {
+                    sentencesListViewAdapter.toggleTranslationIsDisplayed();
+                    sentencesListViewAdapter.notifyDataSetChanged();
+                    toggleMeaningsListViewVisibility();
+                });
+    }
+
+    private void initForwardFloatingButton() {
+        FloatingActionButton forwardButton = findViewById(R.id.study_forward_button);
+        forwardButton.setOnClickListener(
+                view -> {
+                    if (studyVM.isCardsCollectionEmpty())
+                        return;
+
+                    studyVM.increaseDisplayedCardPointer();
+                    renderContent();
+                });
+    }
+
+    private void initBackwardFloatingButton() {
+        FloatingActionButton backwardButton = findViewById(R.id.study_backward_button);
+        backwardButton.setOnClickListener(
+                view -> {
+                    if (studyVM.isCardsCollectionEmpty())
+                        return;
+
+                    studyVM.decreaseDisplayedCardPointer();
+                    renderContent();
+                });
+    }
+
+    private void initForeignPhraseButton() {
+        final Button foreignPhrase = findViewById(R.id.study_foreign_phrase_button);
+
+        foreignPhrase.setOnClickListener(view -> {
+            if (!studyVM.isCardsCollectionEmpty())
+                Toast.makeText(this, "Sound for word: " +
+                        studyVM.getDisplayedCard().getForeignPhrase(), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    //--------------------------------------------------------------------------------
+    //------------------------------RENDER-METHODS------------------------------------
+    //--------------------------------------------------------------------------------
+
     private void renderForeignPhrase(final String foreignPhrase) {
-            final Button foreignPhraseButton = findViewById(R.id.study_foreign_phrase_button);
-            foreignPhraseButton.setText(foreignPhrase);
+        final Button foreignPhraseButton = findViewById(R.id.study_foreign_phrase_button);
+        foreignPhraseButton.setText(foreignPhrase);
     }
 
     private void renderSentences(List<SentencePair> sentencePairs) {
@@ -139,7 +178,7 @@ public class Study extends AppCompatActivity {
     }
 
     private void renderContent() {
-        if(studyVM.isCardsCollectionEmpty()) {
+        if (studyVM.isCardsCollectionEmpty()) {
             renderNoCardsInfo();
             hideFloatingButtons();
         } else {
@@ -157,8 +196,25 @@ public class Study extends AppCompatActivity {
 
     private void renderActivityTitle() {
         final String activityTitle = Integer.toString(studyVM.getDisplayedCardPointer() + 1)
-                    + '/' + Integer.toString(studyVM.getCardsSize());
+                + '/' + Integer.toString(studyVM.getCardsSize());
         toolbarTitle.setText(activityTitle);
+    }
+
+    //--------------------------------------------------------------------------------
+    //-------------------------------OTHER-METHODS------------------------------------
+    //--------------------------------------------------------------------------------
+
+    private long retrieveDeckIdFromMainActivity() {
+        Intent mainActivity = getIntent();
+        final long DECK_ID_NOT_PROVIDED = -1;
+        final long deckId = mainActivity.getLongExtra(getString(R.string.EXTRA_DECK_ID), DECK_ID_NOT_PROVIDED);
+        Log.d(TAG, "retrieveDeckIdFromMainActivity: deckid:" + deckId);
+        if (deckId == DECK_ID_NOT_PROVIDED)
+            Toast.makeText(this, "Deck Id not provided!", Toast.LENGTH_LONG).show();
+
+        Log.d(TAG, "Starting study activity, deck id: " + Long.toString((deckId)));
+
+        return deckId;
     }
 
     private void hideFloatingButtons() {
@@ -170,52 +226,8 @@ public class Study extends AppCompatActivity {
         backwardButton.setVisibility(View.GONE);
     }
 
-    private void initTranslateFloatingButton() {
-        FloatingActionButton translateButton = findViewById(R.id.study_translate_fab);
-        translateButton.setOnClickListener(
-                view -> {
-                    sentencesListViewAdapter.toggleTranslationIsDisplayed();
-                    sentencesListViewAdapter.notifyDataSetChanged();
-                    toggleMeaningsListViewVisibility();
-                });
-    }
-
-    private void initForwardFloatingButton() {
-        FloatingActionButton forwardButton = findViewById(R.id.study_forward_button);
-        forwardButton.setOnClickListener(
-                view -> {
-                    if(studyVM.isCardsCollectionEmpty())
-                        return;
-
-                    studyVM.increaseDisplayedCardPointer();
-                    renderContent();
-                });
-    }
-
-    private void initBackwardFloatingButton() {
-        FloatingActionButton backwardButton = findViewById(R.id.study_backward_button);
-        backwardButton.setOnClickListener(
-                view -> {
-                    if(studyVM.isCardsCollectionEmpty())
-                        return;
-
-                    studyVM.decreaseDisplayedCardPointer();
-                    renderContent();
-                });
-    }
-
-    private void initForeignPhraseButton() {
-        final Button foreignPhrase = findViewById(R.id.study_foreign_phrase_button);
-        
-        foreignPhrase.setOnClickListener(view -> {
-            if(!studyVM.isCardsCollectionEmpty())
-            Toast.makeText(this, "Sound for word: " +
-                    studyVM.getDisplayedCard().getForeignPhrase(), Toast.LENGTH_SHORT).show();
-        });
-    }
-
     private void toggleMeaningsListViewVisibility() {
-        if(meaningsListView.getVisibility() == View.INVISIBLE)
+        if (meaningsListView.getVisibility() == View.INVISIBLE)
             meaningsListView.setVisibility(View.VISIBLE);
         else
             meaningsListView.setVisibility(View.INVISIBLE);
@@ -228,7 +240,7 @@ public class Study extends AppCompatActivity {
     private void setUpToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null)
+        if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbarTitle = findViewById(R.id.toolbar_title);
     }
