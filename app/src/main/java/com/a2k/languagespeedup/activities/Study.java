@@ -39,6 +39,7 @@ public class Study extends AppCompatActivity {
     private List<SentencePair> displayedSentencePairs = new ArrayList<>();
     private ListView meaningsListView;
     private StudyVM studyVM;
+    private TextView toolbarTitle;
 
     //--------------------------------------------------------------------------------
     //-----------------------------PRIVATE-METHODS------------------------------------
@@ -152,12 +153,19 @@ public class Study extends AppCompatActivity {
             renderSentences(cards.get(studyVM.getDisplayedCardPointer()).getSentences());
             renderMeanings(cards.get(studyVM.getDisplayedCardPointer()).getMeanings());
             renderForeignPhrase(cards.get(studyVM.getDisplayedCardPointer()).getForeignPhrase());
+            renderActivityTitle();
         }
     }
 
     private void renderNoCardsInfo() {
         TextView noCardsInfo = findViewById(R.id.study_no_cards_info);
         noCardsInfo.setVisibility(View.VISIBLE);
+    }
+
+    private void renderActivityTitle() {
+        final String activityTitle = Integer.toString(studyVM.getDisplayedCardPointer() + 1)
+                    + '/' + Integer.toString(cards.size());
+        toolbarTitle.setText(activityTitle);
     }
 
     private void hideFloatingButtons() {
@@ -227,6 +235,9 @@ public class Study extends AppCompatActivity {
     private void setUpToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if(getSupportActionBar() != null)
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbarTitle = findViewById(R.id.toolbar_title);
     }
 
     @Override
