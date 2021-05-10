@@ -252,6 +252,7 @@ public class Study extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add: {
+                Log.d("Dupala", "Trying to add new word.");
             }
             return true;
         }

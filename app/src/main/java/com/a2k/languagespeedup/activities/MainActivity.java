@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add: {
+                Log.d("Dupala", "adding new table");
                 Intent intent = new Intent(this, AddNewDeck.class);
                 startActivity(intent);
             }
